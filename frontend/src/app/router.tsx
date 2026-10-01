@@ -13,6 +13,7 @@ import { ComingSoonPage } from '../pages/ComingSoonPage'
 import { DashboardPage } from '../pages/DashboardPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { ProfilePage } from '../profile/ProfilePage'
+import { RoomsPage } from '../rooms/RoomsPage'
 
 const comingSoonRoutes = allNavItems
   .filter((item) => !isDelivered(item))
@@ -36,6 +37,7 @@ export const routes = [
       { index: true, element: <DashboardPage /> },
       { path: 'profil', element: <ProfilePage /> },
       { path: 'administration/:tab?', element: <AdministrationPage /> },
+      { path: 'chambres/:tab?', element: <RoomsPage /> },
       ...comingSoonRoutes,
       { path: '*', element: <NotFoundPage /> },
     ],

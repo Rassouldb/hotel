@@ -12,6 +12,8 @@ public interface HotelRepository extends JpaRepository<Hotel, UUID> {
 
     Page<Hotel> findByOrganizationId(UUID organizationId, Pageable pageable);
 
+    boolean existsByOrganizationIdAndCode(UUID organizationId, String code);
+
     List<Hotel> findByOrganizationIdOrderByCreatedAtAsc(UUID organizationId);
 
     Page<Hotel> findByOrganizationIdAndIdIn(UUID organizationId, Collection<UUID> ids, Pageable pageable);

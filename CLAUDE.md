@@ -17,6 +17,8 @@
 - Chaque sous-package direct de `sn.niirma` est un module Spring Modulith ; `ModularityTests` vérifie les frontières. Les types publics d'un module sont dans son package racine ; le reste va dans `internal`.
 - `shared` est le noyau partagé : `ApiResponse`/`PageMeta` (enveloppe), `BusinessException` (erreurs métier avec code stable), `TraceIdFilter`, `BaseEntity` (UUID v7, horodatages, `@Version`).
 - Accès (§7) : chaque méthode de contrôleur porte exactement une annotation `@RequiresPermission("CODE")`, `@AuthenticatedOnly` ou `@PublicEndpoint` (vérifié par `AccessRulesIntegrationTest`). Une URL contenant `{hotelId}` est contrôlée pour cet hôtel ; un hôtel non affecté répond 404. Utilisateur courant : `CurrentUser.require()` ; droits : `AccessControl` (relus en base à chaque requête).
+- Paramétrage par défaut d'un hôtel : écouter l'événement `HotelCreated` (et installer aussi au démarrage pour les hôtels existants), comme `DefaultConfiguration` et `DefaultAmenities`.
+- Fichiers (logo, photos) : stockés en base (bytea, 500 Ko max) et lus par `JdbcClient`, jamais chargés avec l'entité ; côté frontend, `fetchImageUrl` (requête authentifiée → URL locale).
 - Nouvelles permissions : les ajouter à l'énumération `iam.Permission` (synchronisée au démarrage) et, si besoin, aux rôles par défaut (`DefaultRoles`).
 - Erreurs : lever `BusinessException` avec un code en MAJUSCULES (§34.4) ; ne jamais exposer de détail technique.
 - Opérations critiques (§32.4) : annoter la méthode du contrôleur avec `@Idempotent` et renvoyer un `ResponseEntity`.

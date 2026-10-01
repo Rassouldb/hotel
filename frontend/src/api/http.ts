@@ -49,6 +49,8 @@ export interface RequestOptions {
   signal?: AbortSignal
   /** Point d’entrée public (connexion, mot de passe oublié) : ni jeton envoyé, ni renouvellement de session. */
   publicEndpoint?: boolean
+  /** Réponse binaire (image) renvoyée telle quelle sous forme de Blob. */
+  binary?: boolean
 }
 
 // --- Jeton d'accès : en mémoire uniquement (jamais dans localStorage), §7 ---------------------------------
@@ -96,7 +98,8 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 
 async function send<T>(path: string, options: RequestOptions): Promise<ApiResult<T>> {
   const headers: Record<string, string> = { Accept: 'application/json' }
-  if (options.body !== undefined) {
+  const isForm = options.body instanceof FormData
+  if (options.body !== undefined && !isForm) {
     headers['Content-Type'] = 'application/json'
   }
   if (options.idempotencyKey) {
@@ -111,7 +114,7 @@ async function send<T>(path: string, options: RequestOptions): Promise<ApiResult
     response = await fetch(path, {
       method: options.method ?? 'GET',
       headers,
-      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      body: options.body === undefined ? undefined : isForm ? (options.body as FormData) : JSON.stringify(options.body),
       signal: options.signal,
       credentials: 'same-origin',
     })
@@ -123,6 +126,9 @@ async function send<T>(path: string, options: RequestOptions): Promise<ApiResult
   }
 
   const traceId = response.headers.get('X-Trace-Id') ?? undefined
+  if (options.binary && response.ok) {
+    return { data: (await response.blob()) as T }
+  }
   const payload: unknown = response.status === 204 ? null : await response.json().catch(() => null)
 
   if (!response.ok) {
@@ -153,4 +159,17 @@ export function fieldErrors(error: unknown): Record<string, string> {
     }
   }
   return result
+}
+
+/** Envoie un fichier (multipart/form-data, champ « file »). */
+export async function uploadFile<T>(path: string, file: File, method: 'POST' | 'PUT' = 'POST'): Promise<ApiResult<T>> {
+  const form = new FormData()
+  form.append('file', file)
+  return apiRequest<T>(path, { method, body: form })
+}
+
+/** Télécharge une image protégée et renvoie une URL locale utilisable dans <img src>. */
+export async function fetchImageUrl(path: string): Promise<string> {
+  const result = await apiRequest<Blob>(path, { binary: true })
+  return URL.createObjectURL(result.data)
 }
