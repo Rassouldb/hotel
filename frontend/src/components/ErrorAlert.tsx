@@ -8,11 +8,14 @@ interface ErrorAlertProps {
   onRetry?: () => void
 }
 
-/** Affiche une erreur API avec son message métier et l'identifiant de trace pour le support. */
+/**
+ * Affiche une erreur API avec son message métier. L'identifiant de trace n'est affiché que pour les
+ * erreurs techniques (serveur, réseau), où il sert au support.
+ */
 export function ErrorAlert({ error, onRetry }: ErrorAlertProps) {
   const { t } = useTranslation()
   const message = error instanceof Error ? error.message : String(error)
-  const traceId = error instanceof ApiError ? error.traceId : undefined
+  const traceId = error instanceof ApiError && (error.status >= 500 || error.status === 0) ? error.traceId : undefined
 
   return (
     <Alert

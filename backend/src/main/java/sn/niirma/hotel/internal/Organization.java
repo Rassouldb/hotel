@@ -28,6 +28,12 @@ public class Organization extends BaseEntity {
     protected Organization() {
     }
 
+    public Organization(String name, String country) {
+        this.name = name;
+        this.country = country;
+        this.status = Status.ACTIVE;
+    }
+
     public String getName() {
         return name;
     }

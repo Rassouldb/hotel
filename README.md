@@ -23,6 +23,23 @@ docker compose up --build
 
 Application : <http://localhost:8081> · emails capturés : <http://localhost:8025>.
 
+### Comptes de développement
+
+Créés automatiquement au démarrage avec le profil `dev` (jamais en production) :
+
+| Identifiant | Mot de passe | Profil |
+| --- | --- | --- |
+| `admin` | `Admin#Dev2026` | Super administrateur |
+| `direction` | `Demo#Pms2026` | Directeur — Hôtel Démo Dakar |
+| `reception` | `Demo#Pms2026` | Réceptionniste — Hôtel Démo Dakar |
+| `caisse` | `Demo#Pms2026` | Caissier — Hôtel Démo Dakar |
+| `comptable` | `Demo#Pms2026` | Comptable — Dakar et Saly |
+| `menage` | `Demo#Pms2026` | Agent housekeeping — Hôtel Démo Dakar |
+
+### Production
+
+Variables obligatoires : `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `PMS_JWT_SECRET` (256 bits minimum en Base64, ex. `openssl rand -base64 48`), `PMS_FRONTEND_URL`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`. Premier démarrage : `PMS_BOOTSTRAP_ADMIN_USERNAME` et `PMS_BOOTSTRAP_ADMIN_PASSWORD` créent le super administrateur (mot de passe à changer à la première connexion).
+
 ## Développement
 
 Lancer les dépendances (PostgreSQL, Mailpit) :

@@ -10,27 +10,43 @@ import org.springframework.transaction.annotation.Transactional;
 import sn.niirma.hotel.internal.Hotel;
 import sn.niirma.hotel.internal.HotelRepository;
 import sn.niirma.shared.error.BusinessException;
+import sn.niirma.shared.security.AccessControl;
+import sn.niirma.shared.security.CurrentUser;
+import sn.niirma.shared.security.HotelScope;
 
 /**
- * Accès en lecture aux hôtels. Le filtrage par hôtels autorisés de l'utilisateur arrive avec
- * l'authentification (itération 1).
+ * Accès en lecture aux hôtels pour l'utilisateur courant : uniquement les hôtels de son
+ * organisation auxquels il est affecté (tous pour un super administrateur).
  */
 @Service
 @Transactional(readOnly = true)
 public class HotelService {
 
     private final HotelRepository hotels;
+    private final AccessControl accessControl;
 
-    HotelService(HotelRepository hotels) {
+    HotelService(HotelRepository hotels, AccessControl accessControl) {
         this.hotels = hotels;
+        this.accessControl = accessControl;
     }
 
     public Page<HotelView> list(Pageable pageable) {
-        return hotels.findAll(pageable).map(HotelService::toView);
+        UUID organizationId = CurrentUser.require().organizationId();
+        HotelScope scope = accessControl.accessibleHotels();
+        if (scope.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        Page<Hotel> page = scope.allHotels()
+                ? hotels.findByOrganizationId(organizationId, pageable)
+                : hotels.findByOrganizationIdAndIdIn(organizationId, scope.hotelIds(), pageable);
+        return page.map(HotelService::toView);
     }
 
     public HotelView get(UUID hotelId) {
+        UUID organizationId = CurrentUser.require().organizationId();
         return hotels.findById(hotelId)
+                .filter(hotel -> hotel.getOrganizationId().equals(organizationId))
+                .filter(hotel -> accessControl.canAccessHotel(hotel.getId()))
                 .map(HotelService::toView)
                 .orElseThrow(() -> BusinessException.notFound("HOTEL_NOT_FOUND", "Hôtel introuvable."));
     }

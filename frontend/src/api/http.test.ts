@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { ApiError, apiRequest } from './http'
+import { ApiError, apiRequest, setAccessToken, setRefreshHandler } from './http'
 
 function mockFetch(status: number, body: unknown, headers: Record<string, string> = {}) {
   const fetchMock = vi.fn().mockResolvedValue(
@@ -55,6 +55,39 @@ describe('apiRequest', () => {
     const error = await apiRequest('/api/v1/hotels').catch((e: unknown) => e)
 
     expect(error).toMatchObject({ status: 0, code: 'NETWORK_ERROR' })
+  })
+
+  it('renews an expired access token once and replays the request', async () => {
+    setAccessToken('expired-token')
+    setRefreshHandler(async () => {
+      setAccessToken('fresh-token')
+      return true
+    })
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        success: false, error: { code: 'UNAUTHENTICATED', message: 'Authentification requise.' }, timestamp: '',
+      }), { status: 401 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ success: true, data: { ok: true } }), { status: 200 }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await apiRequest<{ ok: boolean }>('/api/v1/me')
+
+    expect(result.data).toEqual({ ok: true })
+    const [, retry] = fetchMock.mock.calls[1] as [string, RequestInit]
+    expect(retry.headers).toMatchObject({ Authorization: 'Bearer fresh-token' })
+    setRefreshHandler(null)
+    setAccessToken(null)
+  })
+
+  it('does not send the access token to public authentication endpoints', async () => {
+    setAccessToken('some-token')
+    const fetchMock = mockFetch(200, { success: true, data: {} })
+
+    await apiRequest('/api/v1/auth/login', { method: 'POST', body: {}, publicEndpoint: true })
+
+    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    expect(init.headers).not.toHaveProperty('Authorization')
+    setAccessToken(null)
   })
 
   it('sends the idempotency key and JSON body for critical operations', async () => {

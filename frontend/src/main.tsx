@@ -8,7 +8,7 @@ import './i18n'
 import { createQueryClient } from './app/queryClient'
 import { router } from './app/router'
 import { theme } from './app/theme'
-import { ActiveHotelProvider } from './hotel/ActiveHotelContext'
+import { AuthProvider } from './auth/AuthContext'
 
 const queryClient = createQueryClient()
 
@@ -17,9 +17,9 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        <ActiveHotelProvider>
+        <AuthProvider>
           <RouterProvider router={router} />
-        </ActiveHotelProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ThemeProvider>
   </StrictMode>,

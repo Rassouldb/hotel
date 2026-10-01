@@ -1,6 +1,7 @@
 /**
- * Client HTTP de l'API PMS. Déballe l'enveloppe standard { success, data, meta } et transforme
- * les erreurs au format §34.2 en ApiError, avec le traceId à communiquer au support.
+ * Client HTTP de l'API PMS. Déballe l'enveloppe standard { success, data, meta }, transforme les
+ * erreurs au format §34.2 en ApiError (avec le traceId à communiquer au support), joint le jeton
+ * d'accès et le renouvelle automatiquement une fois quand il a expiré.
  */
 
 export interface PageMeta {
@@ -46,15 +47,63 @@ export interface RequestOptions {
   /** Obligatoire pour les opérations critiques (§32.4) : réutiliser la même clé lors d'un nouvel essai. */
   idempotencyKey?: string
   signal?: AbortSignal
+  /** Point d’entrée public (connexion, mot de passe oublié) : ni jeton envoyé, ni renouvellement de session. */
+  publicEndpoint?: boolean
+}
+
+// --- Jeton d'accès : en mémoire uniquement (jamais dans localStorage), §7 ---------------------------------
+
+let accessToken: string | null = null
+let refreshHandler: (() => Promise<boolean>) | null = null
+let pendingRefresh: Promise<boolean> | null = null
+
+export function setAccessToken(token: string | null) {
+  accessToken = token
+}
+
+export function getAccessToken(): string | null {
+  return accessToken
+}
+
+/** Fonction appelée pour renouveler la session quand l'API répond 401 ; renvoie vrai en cas de succès. */
+export function setRefreshHandler(handler: (() => Promise<boolean>) | null) {
+  refreshHandler = handler
+}
+
+function refreshOnce(): Promise<boolean> {
+  if (!refreshHandler) {
+    return Promise.resolve(false)
+  }
+  if (!pendingRefresh) {
+    pendingRefresh = refreshHandler().finally(() => {
+      pendingRefresh = null
+    })
+  }
+  return pendingRefresh
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<ApiResult<T>> {
+  try {
+    return await send<T>(path, options)
+  } catch (error) {
+    const expired = error instanceof ApiError && error.status === 401 && error.code === 'UNAUTHENTICATED'
+    if (expired && !options.publicEndpoint && (await refreshOnce())) {
+      return send<T>(path, options)
+    }
+    throw error
+  }
+}
+
+async function send<T>(path: string, options: RequestOptions): Promise<ApiResult<T>> {
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (options.body !== undefined) {
     headers['Content-Type'] = 'application/json'
   }
   if (options.idempotencyKey) {
     headers['Idempotency-Key'] = options.idempotencyKey
+  }
+  if (accessToken && !options.publicEndpoint) {
+    headers.Authorization = `Bearer ${accessToken}`
   }
 
   let response: Response
@@ -64,6 +113,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       headers,
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       signal: options.signal,
+      credentials: 'same-origin',
     })
   } catch (cause) {
     if (cause instanceof DOMException && cause.name === 'AbortError') {
@@ -89,4 +139,18 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 function isErrorBody(payload: unknown): payload is ErrorBody {
   return typeof payload === 'object' && payload !== null && 'error' in payload
     && typeof (payload as ErrorBody).error?.code === 'string'
+}
+
+/** Erreur de validation propre à un champ (details[].field), pour l'afficher sous le bon champ. */
+export function fieldErrors(error: unknown): Record<string, string> {
+  if (!(error instanceof ApiError)) {
+    return {}
+  }
+  const result: Record<string, string> = {}
+  for (const detail of error.details) {
+    if (typeof detail.field === 'string') {
+      result[detail.field] = error.code === 'VALIDATION_ERROR' && typeof detail.issue === 'string' ? detail.issue : error.message
+    }
+  }
+  return result
 }

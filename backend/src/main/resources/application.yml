@@ -22,9 +22,33 @@ spring:
   threads:
     virtual:
       enabled: true
+  jackson:
+    deserialization:
+      # Jackson 3 refuse par défaut un booléen ou un nombre absent du JSON ; on le traite comme sa valeur par défaut.
+      fail-on-null-for-primitives: false
+
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
 
 server:
   shutdown: graceful
+  # Derrière le reverse proxy : adresse IP réelle du client (X-Forwarded-For) pour les journaux et la limitation.
+  forward-headers-strategy: native
+
+pms:
+  auth:
+    jwt-secret: ${PMS_JWT_SECRET}
+    frontend-url: ${PMS_FRONTEND_URL}
+    mail-from: ${PMS_MAIL_FROM:PMS <no-reply@pms.local>}
+  bootstrap:
+    organization-name: ${PMS_BOOTSTRAP_ORGANIZATION_NAME:}
+    organization-country: ${PMS_BOOTSTRAP_ORGANIZATION_COUNTRY:SN}
+    admin-username: ${PMS_BOOTSTRAP_ADMIN_USERNAME:}
+    admin-password: ${PMS_BOOTSTRAP_ADMIN_PASSWORD:}
+    admin-must-change-password: true
 
 management:
   endpoints:

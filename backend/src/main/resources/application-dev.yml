@@ -7,6 +7,17 @@ spring:
   flyway:
     locations: classpath:db/migration,classpath:db/seed
 
+# Secrets et comptes de développement uniquement : ne jamais les réutiliser ailleurs.
+pms:
+  auth:
+    jwt-secret: ${PMS_JWT_SECRET:ZGV2LW9ubHktand0LXNlY3JldC1wbXMtbmlpcm1hLTIwMjYtbm90LWZvci1wcm9k}
+    frontend-url: ${PMS_FRONTEND_URL:http://localhost:5173}
+  bootstrap:
+    admin-username: admin
+    admin-password: Admin#Dev2026
+    admin-must-change-password: false
+    demo-users-password: Demo#Pms2026
+
 logging:
   level:
     sn.niirma: DEBUG

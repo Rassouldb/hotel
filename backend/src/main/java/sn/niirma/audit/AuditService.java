@@ -14,11 +14,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import tools.jackson.databind.ObjectMapper;
 
 import sn.niirma.shared.persistence.UuidV7;
+import sn.niirma.shared.security.CurrentUser;
 import sn.niirma.shared.web.TraceContext;
 
 /**
- * Journal d'audit en ajout seul. Un succès est écrit dans la transaction métier (il disparaît si
- * elle est annulée) ; un échec est écrit dans une transaction indépendante pour être conservé.
+ * Journal d'audit en ajout seul. L'auteur et l'organisation sont ceux de l'utilisateur authentifié.
+ * Un succès est écrit dans la transaction métier (il disparaît si elle est annulée) ; un échec est
+ * écrit dans une transaction indépendante pour être conservé.
  */
 @Service
 public class AuditService {
@@ -48,16 +50,20 @@ public class AuditService {
     private void insert(AuditEntry entry) {
         HttpServletRequest request = currentRequest();
         jdbc.sql("""
-                        INSERT INTO audit_log (id, occurred_at, organization_id, hotel_id, user_id, action,
+                        INSERT INTO audit_log (id, occurred_at, organization_id, hotel_id, user_id, user_name, action,
                                                entity_type, entity_id, old_value, new_value, reason, ip,
                                                user_agent, result, error_code, trace_id)
-                        VALUES (:id, :occurredAt, :organizationId, :hotelId, NULL, :action,
+                        VALUES (:id, :occurredAt, :organizationId, :hotelId, :userId, :userName, :action,
                                 :entityType, :entityId, CAST(:oldValue AS jsonb), CAST(:newValue AS jsonb), :reason, :ip,
                                 :userAgent, :result, :errorCode, :traceId)
                         """)
                 .param("id", UuidV7.generate())
                 .param("occurredAt", OffsetDateTime.now(clock))
-                .param("organizationId", entry.organizationId())
+                .param("organizationId", entry.organizationId() != null
+                        ? entry.organizationId()
+                        : CurrentUser.current().map(CurrentUser::organizationId).orElse(null))
+                .param("userId", CurrentUser.current().map(CurrentUser::userId).orElse(null))
+                .param("userName", CurrentUser.current().map(CurrentUser::username).orElse(null))
                 .param("hotelId", entry.hotelId())
                 .param("action", entry.action())
                 .param("entityType", entry.entityType())
