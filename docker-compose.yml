@@ -1,0 +1,56 @@
+# Environnement local complet : `docker compose up --build`
+#   Application : http://localhost:8081   (frontend + API derrière Nginx)
+#   Emails      : http://localhost:8025   (Mailpit)
+#
+# Pour développer, ne démarrer que les dépendances et lancer backend/frontend en local :
+#   docker compose up -d postgres mailpit
+name: pms
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: pms
+      POSTGRES_USER: pms
+      POSTGRES_PASSWORD: pms
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pms -d pms"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  api:
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:postgresql://postgres:5432/pms
+      DB_USERNAME: pms
+      DB_PASSWORD: pms
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NODE_OPTIONS: ${PMS_BUILD_NODE_OPTIONS:-}
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+
+volumes:
+  postgres-data:

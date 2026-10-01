@@ -1,0 +1,11 @@
+# Production : logs JSON structurés (le MDC, dont traceId, est inclus), documentation API non publiée.
+logging:
+  structured:
+    format:
+      console: logstash
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
