@@ -82,7 +82,7 @@ export const navigation: NavSection[] = [
         path: '/administration',
         icon: <SettingsIcon />,
         availableIn: 1,
-        anyOf: ['USER_VIEW', 'ROLE_MANAGE', 'AUDIT_VIEW'],
+        anyOf: ['USER_VIEW', 'ROLE_MANAGE', 'AUDIT_VIEW', 'HOTEL_UPDATE', 'SETTINGS_UPDATE', 'TAX_MANAGE', 'PAYMENT_METHOD_MANAGE'],
         scope: 'organization',
       },
     ],
@@ -92,7 +92,7 @@ export const navigation: NavSection[] = [
 export const allNavItems: NavItem[] = navigation.flatMap((section) => section.items)
 
 /** Dernière itération livrée : les modules prévus plus tard affichent la page « en préparation ». */
-export const CURRENT_ITERATION = 1
+export const CURRENT_ITERATION = 2
 
 export function isDelivered(item: NavItem): boolean {
   return item.availableIn !== 'later' && item.availableIn <= CURRENT_ITERATION

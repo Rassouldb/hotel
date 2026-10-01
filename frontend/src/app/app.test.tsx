@@ -58,12 +58,26 @@ describe('application', () => {
       'GET /api/v1/roles': () => ({ status: 200, body: [] }),
     })
 
-    renderApp('/administration')
+    renderApp('/administration/utilisateurs')
 
     expect(await screen.findByRole('tab', { name: 'Utilisateurs' })).toBeInTheDocument()
+    expect(await screen.findByRole('tab', { name: "Paramètres de l'hôtel" })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'Hôtels' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Rôles' })).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: "Journal d'audit" })).toBeInTheDocument()
     expect(await screen.findByText('Aucun utilisateur.')).toBeInTheDocument()
+  })
+
+  it('opens the hotel settings tab when it is requested directly', async () => {
+    installFakeApi({
+      ...signedIn({ superAdmin: true, hotels: [] }),
+      'GET /api/v1/hotels/h1/settings': () => ({ status: 200, body: {} }),
+    })
+
+    const { router } = renderApp('/administration/parametres')
+
+    expect(await screen.findByRole('tab', { name: 'Informations', selected: true })).toBeInTheDocument()
+    expect(router.state.location.pathname).toBe('/administration/parametres')
   })
 
   it('forces the replacement of a temporary password', async () => {

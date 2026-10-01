@@ -1,6 +1,6 @@
 # Itération 2 — Paramétrage de l'hôtel, chambres, statuts et blocages
 
-**Statut** : validé le 2026-10-01 — en cours de réalisation
+**Statut** : réalisé le 2026-10-01
 **Références** : cahier des charges §6, §8.3, §9, §12.1, §12.5, §20.1, §33.2, §44.1
 
 ## Objectif
@@ -160,3 +160,12 @@ Migration V7 : `hotel_setting` (paramètres typés en JSON validé), `tax` + `ta
 1. **Fichiers en base pour l'instant** : logo de l'hôtel et photos des types de chambres stockés en base (PNG ou JPEG, 500 Ko maximum chacun). Un stockage objet chiffré sera mis en place à l'itération 6 pour les pièces d'identité.
 2. **Taxes de démonstration provisoires** : TVA 18 % sur toutes les catégories ; taxe de séjour de 1 000 XOF par adulte et par nuit, moins de 12 ans exonérés. À confirmer avec le comptable (point ouvert P3). Un nouvel hôtel est créé sans taxe : elles se paramètrent dans l'écran des taxes.
 3. **Mobile Money** : Orange Money et Wave actifs ; MTN MoMo et Moov Money créés désactivés.
+
+## Réalisation
+
+- Backend : module `hotel` (création d'hôtel, informations, logo, paramètres d'exploitation typés ; sous-package `configuration` : taxes et historique des taux, moyens de paiement, canaux, motifs, paramétrage par défaut) et nouveau module `rooms` (équipements, types et photos, chambres, statuts, historique, blocages) ; migration V7.
+- Frontend : Administration › Paramètres de l'hôtel (informations et logo, exploitation, taxes, moyens de paiement, canaux, motifs) et › Hôtels (super administrateur) ; page Chambres (état par étage avec compteurs et actions de ménage, types, gestion et création en série, blocages).
+- Tests : 74 tests backend, 22 tests frontend ; parcours vérifié dans le navigateur.
+- Écarts :
+  - Les taux et montants de taxes sont renvoyés avec deux décimales ; le format définitif des montants (nombre ou chaîne, §34.1) sera fixé avec le module de facturation.
+  - Le contrôle des réservations en conflit avec un blocage arrivera avec les réservations (itération 4).
