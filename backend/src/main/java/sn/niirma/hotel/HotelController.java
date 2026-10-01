@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import sn.niirma.shared.api.ApiResponse;
 import sn.niirma.shared.api.PageMeta;
+import sn.niirma.shared.security.AuthenticatedOnly;
+import sn.niirma.shared.security.RequiresPermission;
 
 @RestController
 @RequestMapping("/api/v1/hotels")
@@ -28,6 +30,7 @@ class HotelController {
     }
 
     @GetMapping
+    @AuthenticatedOnly
     ApiResponse<List<HotelView>> list(@RequestParam(defaultValue = "1") int page,
                                       @RequestParam(defaultValue = "25") int size) {
         PageRequest pageable = PageRequest.of(Math.max(page, 1) - 1, Math.clamp(size, 1, MAX_PAGE_SIZE),
@@ -37,6 +40,7 @@ class HotelController {
     }
 
     @GetMapping("/{hotelId}")
+    @RequiresPermission("HOTEL_VIEW")
     ApiResponse<HotelView> get(@PathVariable UUID hotelId) {
         return ApiResponse.of(hotelService.get(hotelId));
     }

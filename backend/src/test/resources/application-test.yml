@@ -10,3 +10,13 @@ spring:
 pms:
   idempotency:
     cleanup-cron: "-"
+  auth:
+    jwt-secret: dGVzdC1vbmx5LWp3dC1zZWNyZXQtcG1zLW5paXJtYS0yMDI2LTMyLWJ5dGVz
+    frontend-url: http://localhost:5173
+    # Toutes les requêtes des tests viennent de la même adresse : limite testée à part (AttemptRateLimiterTest).
+    attempts-per-minute: 100000
+  bootstrap:
+    admin-username: admin
+    admin-password: Admin#Test2026
+    admin-must-change-password: false
+    demo-users-password: Demo#Test2026

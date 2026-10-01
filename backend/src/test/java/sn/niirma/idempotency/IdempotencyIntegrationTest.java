@@ -14,12 +14,14 @@ import java.util.concurrent.Future;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
 
 import sn.niirma.support.IntegrationTest;
+import sn.niirma.support.TestAuth;
 import sn.niirma.support.TestOperationsController;
 
 @IntegrationTest
@@ -33,9 +35,15 @@ class IdempotencyIntegrationTest {
     @Autowired
     JdbcClient jdbc;
 
+    @Autowired
+    TestAuth auth;
+
+    private String bearer;
+
     @BeforeEach
-    void resetCounter() {
+    void setUp() {
         TestOperationsController.EXECUTIONS.set(0);
+        bearer = auth.admin().bearer();
     }
 
     @Test
@@ -67,6 +75,7 @@ class IdempotencyIntegrationTest {
     @Test
     void theKeyIsMandatory() {
         MvcTestResult response = mvc.post().uri("/api/v1/test-operations")
+                .header(HttpHeaders.AUTHORIZATION, bearer)
                 .contentType(MediaType.APPLICATION_JSON).content(BODY).exchange();
 
         assertThat(response).hasStatus(400);
@@ -116,6 +125,7 @@ class IdempotencyIntegrationTest {
 
     private MvcTestResult post(String uri, String key, String body) {
         return mvc.post().uri(uri)
+                .header(HttpHeaders.AUTHORIZATION, bearer)
                 .header(Idempotent.HEADER, key)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
