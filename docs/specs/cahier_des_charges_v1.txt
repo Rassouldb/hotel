@@ -1,0 +1,2090 @@
+# CAHIER DES CHARGES FONCTIONNEL ET TECHNIQUE
+
+## Système intégré de gestion hôtelière — PMS
+
+**Version :** 1.0
+**Type de projet :** Application web de gestion hôtelière
+**Architecture cible :** Application web moderne, modulaire et évolutive
+**Périmètre initial :** Gestion d'un établissement hôtelier
+**Évolutivité :** Multi-hôtels / multi-sites / multi-utilisateurs
+
+---
+
+# 1. CONTEXTE DU PROJET
+
+Les établissements hôteliers doivent gérer simultanément plusieurs activités :
+
+* réservations ;
+* disponibilité des chambres ;
+* accueil des clients ;
+* check-in et check-out ;
+* facturation ;
+* paiements ;
+* restauration ;
+* services additionnels ;
+* housekeeping ;
+* maintenance ;
+* stocks ;
+* dépenses ;
+* caisse ;
+* reporting ;
+* gestion du personnel et des accès.
+
+Lorsque ces activités sont gérées avec plusieurs outils indépendants ou manuellement, cela peut entraîner :
+
+* des erreurs de réservation ;
+* des difficultés de suivi des chambres ;
+* des erreurs de facturation ;
+* des écarts de caisse ;
+* un manque de traçabilité ;
+* une faible visibilité sur les performances de l'hôtel ;
+* des difficultés à consolider les données.
+
+Le présent projet vise donc à mettre en place un **Property Management System (PMS)** permettant de centraliser l'ensemble des opérations de l'hôtel.
+
+---
+
+# 2. OBJECTIFS DU PROJET
+
+## 2.1 Objectif général
+
+Développer une plateforme permettant de gérer de manière centralisée et sécurisée l'ensemble du cycle de vie d'un séjour hôtelier.
+
+Le système devra couvrir le processus :
+
+**Réservation → Arrivée → Check-in → Séjour → Consommations → Check-out → Facturation → Paiement → Reporting**
+
+## 2.2 Objectifs spécifiques
+
+Le système devra permettre :
+
+* de gérer les chambres ;
+* de gérer les disponibilités ;
+* de gérer les réservations ;
+* de gérer les clients ;
+* de gérer les séjours ;
+* de gérer les check-in/check-out ;
+* de gérer les paiements ;
+* de produire les factures ;
+* de gérer les services additionnels ;
+* de gérer le restaurant/bar ;
+* de gérer le housekeeping ;
+* de gérer la maintenance ;
+* de gérer les stocks ;
+* de gérer les dépenses ;
+* de gérer la caisse ;
+* de produire des rapports ;
+* de contrôler les accès utilisateurs ;
+* de tracer les opérations sensibles.
+
+---
+
+# 3. PÉRIMÈTRE DU PROJET
+
+## 3.1 Périmètre inclus
+
+Le système couvrira les modules suivants :
+
+1. Authentification
+2. Utilisateurs et rôles
+3. Gestion de l'hôtel
+4. Gestion des chambres
+5. Gestion des clients
+6. Gestion des entreprises
+7. Gestion des réservations
+8. Planning hôtelier
+9. Check-in
+10. Check-out
+11. Facturation
+12. Paiements
+13. Caisse
+14. Services additionnels
+15. Restaurant/bar
+16. Housekeeping
+17. Maintenance
+18. Stocks
+19. Fournisseurs
+20. Dépenses
+21. Reporting
+22. Notifications
+23. Audit
+24. Paramétrage
+
+## 3.2 Évolutions futures
+
+Le système devra pouvoir évoluer vers :
+
+* multi-hôtels ;
+* portail client ;
+* réservation en ligne ;
+* intégration Booking.com/Expedia et autres OTA ;
+* paiement Mobile Money ;
+* paiement par carte ;
+* SMS ;
+* WhatsApp ;
+* comptabilité ;
+* gestion de la paie ;
+* programme de fidélité ;
+* application mobile ;
+* channel manager ;
+* gestion des événements ;
+* gestion des salles de conférence ;
+* intelligence décisionnelle.
+
+---
+
+# 4. PROFILS UTILISATEURS
+
+## 4.1 Super Administrateur
+
+Accès à l'ensemble du système.
+
+Permissions :
+
+* gestion des hôtels ;
+* gestion des utilisateurs ;
+* gestion des rôles ;
+* paramétrage ;
+* consultation des audits ;
+* accès aux rapports ;
+* gestion des configurations globales.
+
+## 4.2 Directeur / Manager hôtel
+
+Accès aux opérations de son hôtel.
+
+Il peut :
+
+* consulter le dashboard ;
+* gérer les chambres ;
+* gérer les réservations ;
+* consulter les clients ;
+* gérer les tarifs ;
+* consulter les rapports ;
+* superviser la caisse ;
+* superviser le personnel.
+
+## 4.3 Réceptionniste
+
+Accès principalement à :
+
+* réservations ;
+* clients ;
+* chambres ;
+* check-in ;
+* check-out ;
+* paiements ;
+* factures.
+
+## 4.4 Caissier
+
+Accès :
+
+* encaissements ;
+* remboursements selon autorisation ;
+* caisse ;
+* clôture de caisse ;
+* historique des transactions.
+
+## 4.5 Comptable
+
+Accès :
+
+* factures ;
+* paiements ;
+* dépenses ;
+* fournisseurs ;
+* rapports financiers ;
+* exports comptables.
+
+## 4.6 Responsable housekeeping
+
+Accès :
+
+* état des chambres ;
+* tâches de nettoyage ;
+* affectation des tâches ;
+* inspection des chambres.
+
+## 4.7 Agent housekeeping
+
+Accès :
+
+* tâches assignées ;
+* changement du statut des chambres ;
+* signalement d'anomalies.
+
+## 4.8 Responsable maintenance
+
+Accès :
+
+* tickets ;
+* équipements ;
+* maintenance ;
+* chambres indisponibles.
+
+## 4.9 Responsable restaurant
+
+Accès :
+
+* tables ;
+* commandes ;
+* produits ;
+* stocks ;
+* additions ;
+* rattachement aux chambres.
+
+---
+
+# 5. MODULE AUTHENTIFICATION
+
+## Fonctionnalités
+
+L'utilisateur doit pouvoir :
+
+* se connecter ;
+* se déconnecter ;
+* modifier son mot de passe ;
+* réinitialiser son mot de passe ;
+* consulter sa session ;
+* gérer son profil.
+
+## Sécurité
+
+Le système doit prévoir :
+
+* authentification sécurisée ;
+* mot de passe hashé ;
+* expiration des sessions ;
+* refresh token ;
+* limitation des tentatives ;
+* journalisation des connexions ;
+* gestion des rôles ;
+* gestion des permissions.
+
+---
+
+# 6. GESTION DE L'HÔTEL
+
+Chaque hôtel doit pouvoir être configuré avec :
+
+* nom ;
+* adresse ;
+* téléphone ;
+* email ;
+* logo ;
+* devise ;
+* fuseau horaire ;
+* langue ;
+* régime fiscal ;
+* taxes ;
+* horaires ;
+* politique d'annulation ;
+* politique de check-in ;
+* politique de check-out.
+
+---
+
+# 7. GESTION DES CHAMBRES
+
+## 7.1 Types de chambres
+
+Exemples :
+
+* Standard ;
+* Superior ;
+* Deluxe ;
+* Suite ;
+* Suite familiale ;
+* VIP.
+
+Chaque type possède :
+
+* nom ;
+* description ;
+* capacité ;
+* nombre d'adultes ;
+* nombre d'enfants ;
+* prix de base ;
+* équipements ;
+* photos.
+
+## 7.2 Chambres
+
+Chaque chambre possède :
+
+* identifiant ;
+* numéro ;
+* étage ;
+* type ;
+* capacité ;
+* prix ;
+* statut ;
+* observations.
+
+## 7.3 Statuts
+
+* AVAILABLE
+* RESERVED
+* OCCUPIED
+* DIRTY
+* CLEANING
+* CLEAN
+* INSPECTED
+* MAINTENANCE
+* OUT_OF_SERVICE
+
+Le changement de statut doit être historisé.
+
+---
+
+# 8. GESTION DES CLIENTS
+
+## Informations
+
+* nom ;
+* prénom ;
+* téléphone ;
+* email ;
+* nationalité ;
+* date de naissance ;
+* adresse ;
+* type de pièce ;
+* numéro de pièce ;
+* date d'expiration ;
+* entreprise ;
+* observations ;
+* préférences.
+
+## Historique
+
+Le système doit permettre de consulter :
+
+* les séjours ;
+* les réservations ;
+* les factures ;
+* les paiements ;
+* les consommations ;
+* les réclamations éventuelles.
+
+---
+
+# 9. GESTION DES ENTREPRISES
+
+Le système doit permettre de gérer les clients corporate.
+
+Informations :
+
+* raison sociale ;
+* RCCM ;
+* identifiant fiscal ;
+* adresse ;
+* téléphone ;
+* email ;
+* contacts ;
+* tarifs négociés ;
+* conditions de paiement ;
+* plafond de crédit.
+
+Une entreprise peut être associée à plusieurs réservations et plusieurs clients.
+
+---
+
+# 10. GESTION DES RÉSERVATIONS
+
+## 10.1 Création
+
+Une réservation doit contenir :
+
+* numéro ;
+* client ;
+* entreprise éventuelle ;
+* chambre ou type de chambre ;
+* date d'arrivée ;
+* date de départ ;
+* nombre d'adultes ;
+* nombre d'enfants ;
+* tarif ;
+* remise ;
+* taxes ;
+* montant total ;
+* acompte ;
+* solde ;
+* canal ;
+* commentaires.
+
+## 10.2 Statuts
+
+* PENDING
+* CONFIRMED
+* CHECKED_IN
+* CHECKED_OUT
+* CANCELLED
+* NO_SHOW
+
+## 10.3 Canaux
+
+Exemples :
+
+* réception ;
+* téléphone ;
+* email ;
+* site web ;
+* Booking ;
+* Expedia ;
+* agence ;
+* entreprise ;
+* autre OTA.
+
+---
+
+# 11. PLANNING HÔTELIER
+
+Un calendrier doit permettre de visualiser :
+
+* chambres ;
+* réservations ;
+* dates ;
+* arrivées ;
+* départs ;
+* disponibilités ;
+* chambres occupées ;
+* chambres bloquées.
+
+Le planning doit permettre :
+
+* déplacement d'une réservation ;
+* changement de chambre ;
+* prolongation du séjour ;
+* réduction du séjour.
+
+Toute modification doit être contrôlée et auditée.
+
+---
+
+# 12. RÈGLE CRITIQUE : DISPONIBILITÉ
+
+Le système doit empêcher deux réservations incompatibles sur une même chambre.
+
+Avant toute réservation ou attribution :
+
+1. rechercher les réservations existantes ;
+2. vérifier les dates ;
+3. vérifier le statut de la chambre ;
+4. vérifier les blocages ;
+5. vérifier les maintenances ;
+6. confirmer la disponibilité.
+
+La vérification doit être effectuée **côté serveur**, et non uniquement dans l'interface.
+
+---
+
+# 13. CHECK-IN
+
+## Workflow
+
+1. rechercher la réservation ;
+2. identifier le client ;
+3. vérifier les documents ;
+4. vérifier la chambre ;
+5. confirmer les occupants ;
+6. enregistrer l'acompte ou le paiement ;
+7. enregistrer le check-in ;
+8. générer la fiche d'enregistrement ;
+9. passer la chambre à OCCUPIED.
+
+Le système doit permettre le check-in sans réservation, sous réserve des règles définies par l'hôtel.
+
+---
+
+# 14. GESTION DU SÉJOUR
+
+Pendant le séjour, le système doit permettre :
+
+* ajout de services ;
+* consommation restaurant ;
+* minibar ;
+* blanchisserie ;
+* transport ;
+* spa ;
+* parking ;
+* changement de chambre ;
+* prolongation ;
+* modification des occupants ;
+* ajout de paiement.
+
+Toutes les consommations doivent être rattachées au séjour.
+
+---
+
+# 15. CHECK-OUT
+
+## Workflow
+
+1. rechercher le séjour ;
+2. calculer les nuitées ;
+3. récupérer les services ;
+4. récupérer les consommations restaurant ;
+5. récupérer les autres charges ;
+6. appliquer les remises ;
+7. calculer les taxes ;
+8. calculer le montant final ;
+9. calculer le montant payé ;
+10. calculer le solde ;
+11. enregistrer le paiement ;
+12. générer la facture ;
+13. clôturer le séjour ;
+14. passer la chambre à DIRTY/CLEANING.
+
+---
+
+# 16. FACTURATION
+
+## Types
+
+* facture client ;
+* facture corporate ;
+* facture pro forma ;
+* avoir ;
+* reçu.
+
+## Facture
+
+Une facture doit contenir :
+
+* numéro ;
+* date ;
+* hôtel ;
+* client ;
+* entreprise ;
+* séjour ;
+* lignes ;
+* quantité ;
+* prix unitaire ;
+* remise ;
+* taxes ;
+* total HT ;
+* TVA ;
+* total TTC ;
+* montant payé ;
+* solde.
+
+## Documents
+
+Prévoir :
+
+* PDF ;
+* impression ;
+* téléchargement ;
+* envoi par email.
+
+---
+
+# 17. PAIEMENTS
+
+## Moyens
+
+Le système doit pouvoir gérer :
+
+* espèces ;
+* carte bancaire ;
+* virement ;
+* chèque ;
+* Mobile Money ;
+* autres.
+
+## Architecture
+
+Les moyens de paiement doivent être configurables afin de permettre l'intégration ultérieure de différents opérateurs de paiement.
+
+## Statuts
+
+* PENDING
+* SUCCESS
+* FAILED
+* CANCELLED
+* REFUNDED
+
+Chaque paiement doit avoir une référence unique.
+
+---
+
+# 18. CAISSE
+
+## Ouverture
+
+L'utilisateur indique :
+
+* caisse ;
+* utilisateur ;
+* date ;
+* solde initial.
+
+## Pendant la journée
+
+Enregistrer :
+
+* encaissements ;
+* sorties ;
+* remboursements ;
+* corrections autorisées.
+
+## Fermeture
+
+Calculer :
+
+**Solde théorique = Solde initial + Entrées - Sorties**
+
+Puis enregistrer :
+
+* solde théorique ;
+* solde réel ;
+* écart ;
+* justification ;
+* utilisateur ;
+* date.
+
+La fermeture doit être auditée.
+
+---
+
+# 19. SERVICES ADDITIONNELS
+
+Le système doit permettre de configurer :
+
+* petit-déjeuner ;
+* restaurant ;
+* minibar ;
+* blanchisserie ;
+* spa ;
+* massage ;
+* parking ;
+* transport ;
+* room service ;
+* excursions.
+
+Chaque service possède :
+
+* nom ;
+* catégorie ;
+* prix ;
+* taxe ;
+* disponibilité ;
+* statut.
+
+---
+
+# 20. RESTAURANT / BAR
+
+## Gestion
+
+* catégories ;
+* produits ;
+* prix ;
+* tables ;
+* commandes ;
+* additions ;
+* stocks.
+
+## Commande
+
+Une commande contient :
+
+* table ;
+* serveur ;
+* client éventuel ;
+* chambre éventuelle ;
+* produits ;
+* quantités ;
+* prix ;
+* remise ;
+* taxe ;
+* total ;
+* statut.
+
+## Rattachement chambre
+
+Un client occupant la chambre 204 peut demander que son addition soit ajoutée à son compte hôtel.
+
+Le montant devra alors apparaître dans le dossier du séjour.
+
+---
+
+# 21. HOUSEKEEPING
+
+Le module doit permettre de visualiser :
+
+| Chambre | Statut     | Agent   | Priorité |
+| ------- | ---------- | ------- | -------- |
+| 101     | À nettoyer | Agent A | Normale  |
+| 102     | Nettoyage  | Agent B | Haute    |
+| 103     | Propre     | Agent C | -        |
+
+## Workflow
+
+**Occupée → Sale → Nettoyage → Propre → Inspectée → Disponible**
+
+Le responsable peut :
+
+* affecter une tâche ;
+* modifier la priorité ;
+* valider le nettoyage ;
+* signaler un problème.
+
+---
+
+# 22. MAINTENANCE
+
+Créer un système de tickets.
+
+## Ticket
+
+* numéro ;
+* chambre ;
+* équipement ;
+* problème ;
+* description ;
+* priorité ;
+* demandeur ;
+* technicien ;
+* date ;
+* statut ;
+* résolution.
+
+## Statuts
+
+* OPEN
+* IN_PROGRESS
+* RESOLVED
+* CLOSED
+
+Une chambre ayant un problème bloquant peut automatiquement passer en MAINTENANCE.
+
+---
+
+# 23. GESTION DES STOCKS
+
+## Articles
+
+* nom ;
+* catégorie ;
+* unité ;
+* stock minimum ;
+* quantité ;
+* prix ;
+* fournisseur.
+
+## Mouvements
+
+* entrée ;
+* sortie ;
+* ajustement ;
+* inventaire.
+
+Le système doit calculer le stock disponible.
+
+## Alertes
+
+Une notification doit être générée lorsque :
+
+**Stock actuel ≤ Stock minimum**
+
+---
+
+# 24. FOURNISSEURS
+
+Gestion :
+
+* fournisseur ;
+* contacts ;
+* produits ;
+* commandes ;
+* factures ;
+* paiements ;
+* historique.
+
+---
+
+# 25. DÉPENSES
+
+Chaque dépense contient :
+
+* catégorie ;
+* montant ;
+* fournisseur ;
+* date ;
+* moyen de paiement ;
+* justificatif ;
+* utilisateur ;
+* commentaire.
+
+Catégories configurables :
+
+* alimentation ;
+* électricité ;
+* eau ;
+* internet ;
+* maintenance ;
+* fournitures ;
+* transport ;
+* marketing ;
+* autres.
+
+---
+
+# 26. DASHBOARD
+
+Le tableau de bord doit afficher :
+
+## Indicateurs
+
+* chiffre d'affaires du jour ;
+* chiffre d'affaires du mois ;
+* taux d'occupation ;
+* chambres disponibles ;
+* chambres occupées ;
+* chambres en nettoyage ;
+* chambres en maintenance ;
+* arrivées ;
+* départs ;
+* réservations ;
+* impayés.
+
+## Graphiques
+
+* CA quotidien ;
+* CA mensuel ;
+* taux d'occupation ;
+* revenus par chambre ;
+* revenus par service ;
+* répartition des moyens de paiement ;
+* évolution des réservations.
+
+---
+
+# 27. REPORTING
+
+## Rapport d'occupation
+
+* capacité ;
+* chambres disponibles ;
+* chambres occupées ;
+* chambres hors service ;
+* taux d'occupation.
+
+## Rapport financier
+
+* chiffre d'affaires ;
+* dépenses ;
+* paiements ;
+* remboursements ;
+* impayés.
+
+## Rapport réservation
+
+* réservations confirmées ;
+* annulées ;
+* no-show ;
+* durée moyenne ;
+* canal de réservation.
+
+## Rapport client
+
+* nouveaux clients ;
+* clients récurrents ;
+* entreprises ;
+* statistiques de séjour.
+
+## Rapport caisse
+
+* ouverture ;
+* mouvements ;
+* clôture ;
+* écarts.
+
+Tous les rapports doivent être exportables en :
+
+* PDF ;
+* Excel ;
+* CSV.
+
+---
+
+# 28. TARIFICATION
+
+Le système doit permettre plusieurs grilles tarifaires.
+
+Exemples :
+
+* tarif standard ;
+* tarif corporate ;
+* tarif weekend ;
+* tarif haute saison ;
+* tarif basse saison ;
+* tarif promotionnel ;
+* tarif long séjour.
+
+Chaque tarif peut être défini selon :
+
+* chambre ;
+* période ;
+* nombre de nuits ;
+* catégorie de client ;
+* entreprise ;
+* conditions particulières.
+
+---
+
+# 29. PROMOTIONS
+
+Prévoir :
+
+* code promotionnel ;
+* réduction fixe ;
+* réduction en pourcentage ;
+* période de validité ;
+* chambres concernées ;
+* nombre d'utilisations ;
+* conditions.
+
+---
+
+# 30. NOTIFICATIONS
+
+Le système doit gérer :
+
+### Notifications internes
+
+* nouvelle réservation ;
+* annulation ;
+* arrivée imminente ;
+* départ imminent ;
+* stock faible ;
+* maintenance ;
+* paiement.
+
+### Notifications externes
+
+Prévoir une architecture permettant l'intégration :
+
+* email ;
+* SMS ;
+* WhatsApp.
+
+---
+
+# 31. AUDIT
+
+Toute opération sensible doit être journalisée.
+
+Exemples :
+
+* création ;
+* modification ;
+* suppression logique ;
+* annulation ;
+* remboursement ;
+* changement de tarif ;
+* modification d'une réservation ;
+* changement de chambre ;
+* modification d'une facture ;
+* modification d'un paiement.
+
+L'audit doit contenir :
+
+* utilisateur ;
+* action ;
+* objet ;
+* identifiant ;
+* date ;
+* ancienne valeur ;
+* nouvelle valeur ;
+* adresse IP ;
+* résultat.
+
+---
+
+# 32. RBAC — GESTION DES PERMISSIONS
+
+Le système doit utiliser une gestion des droits basée sur les rôles.
+
+Exemples :
+
+```text
+RESERVATION_CREATE
+RESERVATION_UPDATE
+RESERVATION_CANCEL
+
+CHECKIN_CREATE
+CHECKOUT_CREATE
+
+PAYMENT_CREATE
+PAYMENT_REFUND
+
+INVOICE_CREATE
+INVOICE_UPDATE
+
+ROOM_CREATE
+ROOM_UPDATE
+
+USER_CREATE
+USER_UPDATE
+
+REPORT_VIEW
+
+AUDIT_VIEW
+```
+
+Les permissions doivent être contrôlées :
+
+* dans le frontend ;
+* dans l'API/backend.
+
+Le frontend ne doit jamais être considéré comme une couche de sécurité.
+
+---
+
+# 33. MODÈLE DE DONNÉES
+
+Les principales entités sont :
+
+```text
+Organization
+Hotel
+User
+Role
+Permission
+UserRole
+RolePermission
+
+RoomType
+Room
+RoomAmenity
+
+Customer
+Company
+
+Reservation
+ReservationGuest
+Stay
+CheckIn
+CheckOut
+
+RatePlan
+Rate
+
+Invoice
+InvoiceItem
+
+Payment
+PaymentMethod
+
+Service
+ServiceOrder
+
+Restaurant
+RestaurantTable
+Product
+Order
+OrderItem
+
+HousekeepingTask
+
+MaintenanceTicket
+
+Supplier
+Purchase
+PurchaseItem
+
+Stock
+StockMovement
+
+Expense
+
+CashRegister
+CashTransaction
+
+Notification
+
+AuditLog
+```
+
+---
+
+# 34. RELATIONS PRINCIPALES
+
+## Hôtel
+
+Un hôtel possède plusieurs :
+
+* chambres ;
+* utilisateurs ;
+* réservations ;
+* tarifs ;
+* services ;
+* caisses.
+
+## Client
+
+Un client peut avoir plusieurs :
+
+* réservations ;
+* séjours ;
+* factures ;
+* paiements.
+
+## Réservation
+
+Une réservation peut être associée à :
+
+* un client ;
+* plusieurs occupants ;
+* une chambre ;
+* un séjour.
+
+## Séjour
+
+Un séjour possède :
+
+* check-in ;
+* check-out ;
+* consommations ;
+* services ;
+* paiements ;
+* facture.
+
+---
+
+# 35. CONTRAINTES D'INTÉGRITÉ
+
+Le système doit notamment garantir :
+
+### Réservation
+
+Une chambre ne peut pas avoir deux réservations incompatibles.
+
+### Paiement
+
+Un paiement doit toujours être associé à un contexte financier valide.
+
+### Facture
+
+Une facture clôturée ne peut pas être modifiée directement.
+
+### Remboursement
+
+Un remboursement doit référencer le paiement initial.
+
+### Stock
+
+Une sortie ne doit pas produire un stock incohérent.
+
+### Caisse
+
+Chaque mouvement doit être rattaché à une caisse ouverte.
+
+### Audit
+
+Les opérations financières importantes doivent être traçables.
+
+---
+
+# 36. ARCHITECTURE TECHNIQUE
+
+## Frontend
+
+Architecture :
+
+```text
+React
+   ↓
+Components
+   ↓
+Pages
+   ↓
+Hooks
+   ↓
+Services API
+   ↓
+REST API
+```
+
+Le frontend devra utiliser :
+
+* TypeScript ;
+* composants réutilisables ;
+* gestion d'état ;
+* routing ;
+* validation des formulaires ;
+* gestion des permissions ;
+* gestion centralisée des erreurs.
+
+## Backend
+
+Architecture :
+
+```text
+API
+ ↓
+Controllers
+ ↓
+Services
+ ↓
+Business Logic
+ ↓
+Repositories / ORM
+ ↓
+PostgreSQL
+```
+
+Le backend devra séparer :
+
+* présentation ;
+* logique métier ;
+* accès aux données ;
+* intégrations externes.
+
+---
+
+# 37. API REST
+
+L'API devra être documentée avec OpenAPI/Swagger.
+
+Exemples :
+
+```http
+POST /api/v1/auth/login
+
+GET /api/v1/hotels
+GET /api/v1/rooms
+GET /api/v1/rooms/availability
+
+GET /api/v1/customers
+POST /api/v1/customers
+
+GET /api/v1/reservations
+POST /api/v1/reservations
+GET /api/v1/reservations/{id}
+PUT /api/v1/reservations/{id}
+POST /api/v1/reservations/{id}/check-in
+POST /api/v1/reservations/{id}/check-out
+
+GET /api/v1/invoices
+POST /api/v1/invoices
+
+GET /api/v1/payments
+POST /api/v1/payments
+
+GET /api/v1/reports/occupancy
+GET /api/v1/reports/revenue
+```
+
+L'API devra utiliser des codes HTTP cohérents :
+
+* 200 ;
+* 201 ;
+* 400 ;
+* 401 ;
+* 403 ;
+* 404 ;
+* 409 ;
+* 422 ;
+* 500.
+
+---
+
+# 38. GESTION DES ERREURS
+
+Toutes les erreurs doivent utiliser un format standard.
+
+Exemple :
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ROOM_NOT_AVAILABLE",
+    "message": "The selected room is not available for the requested dates."
+  },
+  "timestamp": "2026-10-01T10:00:00Z",
+  "traceId": "..."
+}
+```
+
+Les erreurs techniques internes ne doivent pas être exposées directement à l'utilisateur.
+
+---
+
+# 39. IDEMPOTENCE ET CONCURRENCE
+
+Les opérations sensibles doivent être conçues pour éviter les doublons.
+
+Exemples :
+
+* paiement ;
+* réservation ;
+* remboursement ;
+* commande restaurant.
+
+Une requête répétée accidentellement ne doit pas créer deux opérations financières.
+
+Les opérations critiques doivent utiliser des transactions base de données appropriées.
+
+---
+
+# 40. SÉCURITÉ
+
+Le système doit respecter les bonnes pratiques de sécurité applicative.
+
+Prévoir :
+
+* HTTPS ;
+* hashage sécurisé des mots de passe ;
+* JWT ;
+* refresh token ;
+* RBAC ;
+* validation serveur ;
+* rate limiting ;
+* CORS ;
+* protection contre injection SQL ;
+* protection XSS ;
+* gestion sécurisée des secrets ;
+* logs ;
+* audit ;
+* expiration des sessions.
+
+Les clés API, mots de passe et credentials ne doivent jamais être présents dans le code source.
+
+---
+
+# 41. PERFORMANCE
+
+L'application doit rester performante avec un volume important de :
+
+* clients ;
+* réservations ;
+* paiements ;
+* factures ;
+* transactions ;
+* logs.
+
+Prévoir :
+
+* index SQL ;
+* pagination ;
+* recherche optimisée ;
+* cache lorsque nécessaire ;
+* requêtes SQL optimisées ;
+* chargement différé ;
+* compression ;
+* monitoring.
+
+---
+
+# 42. MULTI-HÔTEL
+
+L'architecture doit permettre ultérieurement :
+
+```text
+Organisation
+   │
+   ├── Hôtel A
+   │     ├── Chambres
+   │     ├── Utilisateurs
+   │     └── Réservations
+   │
+   ├── Hôtel B
+   │     ├── Chambres
+   │     ├── Utilisateurs
+   │     └── Réservations
+   │
+   └── Hôtel C
+```
+
+Les données doivent être isolées par hôtel.
+
+Un utilisateur ne doit accéder qu'aux hôtels qui lui sont autorisés.
+
+---
+
+# 43. LOCALISATION AFRIQUE DE L'OUEST
+
+Le système doit être conçu pour supporter les spécificités du marché régional.
+
+Prévoir notamment :
+
+* FCFA/XOF ;
+* autres devises ;
+* TVA configurable ;
+* facturation locale ;
+* espèces ;
+* carte bancaire ;
+* Mobile Money ;
+* Orange Money ;
+* MTN Mobile Money ;
+* Wave ;
+* Moov Money ;
+* autres opérateurs.
+
+Les intégrations de paiement doivent être abstraites derrière une couche commune afin d'éviter de coupler le cœur du PMS à un opérateur particulier.
+
+---
+
+# 44. GESTION DES DEVISES
+
+L'hôtel doit définir sa devise principale.
+
+Prévoir éventuellement :
+
+* devise de facturation ;
+* devise de paiement ;
+* taux de change ;
+* historique du taux utilisé.
+
+Les montants financiers doivent être stockés avec une précision adaptée et ne doivent pas utiliser de types flottants pour les calculs monétaires.
+
+---
+
+# 45. BACKUP ET RESTAURATION
+
+Prévoir :
+
+* sauvegardes automatiques ;
+* sauvegardes quotidiennes ;
+* conservation configurable ;
+* sauvegardes chiffrées ;
+* procédure de restauration ;
+* tests périodiques de restauration.
+
+---
+
+# 46. LOGGING ET MONITORING
+
+Le système doit produire des logs structurés.
+
+Catégories :
+
+* application ;
+* authentification ;
+* API ;
+* base de données ;
+* paiement ;
+* réservation ;
+* erreurs.
+
+Prévoir des identifiants de corrélation :
+
+```text
+requestId
+traceId
+transactionId
+reservationId
+paymentId
+```
+
+Cela permettra de suivre une opération de bout en bout.
+
+---
+
+# 47. ENVIRONNEMENTS
+
+Prévoir au minimum :
+
+```text
+DEV
+TEST
+PREPROD
+PROD
+```
+
+Les configurations doivent être séparées.
+
+Les credentials ne doivent jamais être partagés entre environnements.
+
+---
+
+# 48. DOCKERISATION
+
+Prévoir des conteneurs pour :
+
+* frontend ;
+* backend ;
+* PostgreSQL ;
+* reverse proxy ;
+* éventuellement Redis.
+
+Un environnement local doit pouvoir être démarré avec :
+
+```bash
+docker compose up
+```
+
+---
+
+# 49. TESTS
+
+## Tests unitaires
+
+Tester :
+
+* calcul des nuitées ;
+* calcul des taxes ;
+* calcul des remises ;
+* calcul des soldes ;
+* disponibilité ;
+* règles de réservation.
+
+## Tests d'intégration
+
+Tester :
+
+* API ;
+* base de données ;
+* authentification ;
+* paiements ;
+* facturation.
+
+## Tests E2E
+
+Scénario principal :
+
+```text
+Création client
+      ↓
+Création réservation
+      ↓
+Confirmation
+      ↓
+Check-in
+      ↓
+Ajout service
+      ↓
+Paiement
+      ↓
+Check-out
+      ↓
+Facture
+```
+
+---
+
+# 50. MVP
+
+Le MVP devra se concentrer sur les fonctionnalités indispensables.
+
+## Phase MVP 1
+
+### Authentification
+
+* login ;
+* utilisateurs ;
+* rôles ;
+* permissions.
+
+### Hôtel
+
+* configuration ;
+* chambres ;
+* types de chambres.
+
+### Clients
+
+* création ;
+* modification ;
+* recherche ;
+* historique.
+
+### Réservations
+
+* création ;
+* modification ;
+* annulation ;
+* calendrier ;
+* disponibilité.
+
+### Séjour
+
+* check-in ;
+* check-out.
+
+### Facturation
+
+* facture ;
+* paiement ;
+* reçu.
+
+### Dashboard
+
+* occupation ;
+* CA ;
+* arrivées ;
+* départs.
+
+---
+
+# 51. MVP PHASE 2
+
+Ajouter :
+
+* housekeeping ;
+* caisse ;
+* dépenses ;
+* services ;
+* rapports ;
+* audit ;
+* notifications.
+
+---
+
+# 52. MVP PHASE 3
+
+Ajouter :
+
+* restaurant ;
+* stock ;
+* fournisseurs ;
+* maintenance ;
+* corporate ;
+* tarifs avancés.
+
+---
+
+# 53. PHASE 4 — INTÉGRATIONS
+
+Ajouter :
+
+* Mobile Money ;
+* cartes bancaires ;
+* email ;
+* SMS ;
+* WhatsApp ;
+* OTA ;
+* réservation en ligne.
+
+---
+
+# 54. PHASE 5 — ÉVOLUTIONS
+
+Ajouter :
+
+* application mobile ;
+* portail client ;
+* fidélité ;
+* channel manager ;
+* BI ;
+* comptabilité ;
+* gestion multi-hôtels avancée.
+
+---
+
+# 55. WORKFLOWS PRINCIPAUX
+
+## Workflow réservation
+
+```text
+Client
+ ↓
+Recherche disponibilité
+ ↓
+Sélection chambre
+ ↓
+Création réservation
+ ↓
+Calcul tarif
+ ↓
+Acompte éventuel
+ ↓
+Confirmation
+ ↓
+Réservation CONFIRMED
+```
+
+## Workflow arrivée
+
+```text
+Réservation
+ ↓
+Arrivée client
+ ↓
+Vérification identité
+ ↓
+Check-in
+ ↓
+Chambre OCCUPIED
+ ↓
+Séjour actif
+```
+
+## Workflow séjour
+
+```text
+Séjour
+ ↓
+Nuitées
+ + Services
+ + Restaurant
+ + Minibar
+ + Autres consommations
+ ↓
+Compte client
+```
+
+## Workflow départ
+
+```text
+Demande check-out
+ ↓
+Calcul facture
+ ↓
+Vérification paiements
+ ↓
+Paiement solde
+ ↓
+Facture
+ ↓
+Check-out
+ ↓
+Chambre DIRTY
+ ↓
+Housekeeping
+ ↓
+CLEAN
+```
+
+---
+
+# 56. INTERFACE UTILISATEUR
+
+## Menu principal
+
+```text
+Dashboard
+
+Réservations
+Planning
+
+Clients
+Entreprises
+
+Chambres
+Housekeeping
+Maintenance
+
+Restaurant
+Services
+
+Facturation
+Paiements
+Caisse
+Dépenses
+
+Stocks
+Fournisseurs
+
+Rapports
+
+Utilisateurs
+Audit
+
+Paramètres
+```
+
+## Principes UX
+
+L'interface doit :
+
+* minimiser le nombre de clics ;
+* privilégier les actions fréquentes ;
+* afficher clairement les statuts ;
+* utiliser des filtres ;
+* proposer une recherche globale ;
+* afficher des confirmations pour les opérations sensibles ;
+* être utilisable sur tablette ;
+* être responsive.
+
+---
+
+# 57. EXIGENCES NON FONCTIONNELLES
+
+## Disponibilité
+
+L'application doit être conçue pour fonctionner de manière continue.
+
+## Sécurité
+
+Les données sensibles doivent être protégées contre les accès non autorisés.
+
+## Performance
+
+Les opérations courantes doivent avoir un temps de réponse adapté à une utilisation opérationnelle.
+
+## Scalabilité
+
+Le système doit pouvoir supporter plusieurs hôtels et une augmentation significative du volume de données.
+
+## Maintenabilité
+
+Le code doit être modulaire et documenté.
+
+## Traçabilité
+
+Les opérations critiques doivent être historisées.
+
+---
+
+# 58. CRITÈRES D'ACCEPTATION
+
+Le projet pourra être considéré comme fonctionnel lorsque :
+
+### Réservation
+
+* une chambre disponible peut être réservée ;
+* une chambre indisponible ne peut pas être réservée ;
+* les conflits sont détectés côté serveur.
+
+### Check-in
+
+* un client peut être enregistré ;
+* une chambre est automatiquement passée à OCCUPIED.
+
+### Séjour
+
+* des services peuvent être ajoutés ;
+* les consommations sont correctement comptabilisées.
+
+### Check-out
+
+* le montant final est calculé ;
+* le solde est vérifié ;
+* la facture est générée ;
+* la chambre est libérée.
+
+### Paiement
+
+* le paiement est enregistré ;
+* la référence est unique ;
+* l'opération est auditée.
+
+### Caisse
+
+* l'ouverture est enregistrée ;
+* les mouvements sont tracés ;
+* la clôture calcule l'écart.
+
+### Sécurité
+
+* un utilisateur ne peut accéder qu'aux fonctionnalités autorisées.
+
+---
+
+# 59. LIVRABLES DU PROJET
+
+L'équipe de développement devra fournir :
+
+## Documentation
+
+* cahier des charges ;
+* architecture technique ;
+* modèle de données ;
+* documentation API ;
+* guide d'installation ;
+* guide utilisateur ;
+* documentation d'exploitation.
+
+## Code
+
+* frontend ;
+* backend ;
+* scripts base de données ;
+* migrations ;
+* tests ;
+* fichiers Docker.
+
+## Infrastructure
+
+* configuration DEV ;
+* configuration TEST ;
+* configuration PREPROD ;
+* configuration PROD ;
+* procédure de déploiement ;
+* procédure de backup ;
+* procédure de restauration.
+
+---
+
+# 60. BACKLOG INITIAL
+
+## Epic 1 — Authentification
+
+* Login
+* Logout
+* Gestion utilisateurs
+* Gestion rôles
+* Gestion permissions
+
+## Epic 2 — Hôtel
+
+* Configuration hôtel
+* Types chambres
+* Chambres
+* Équipements
+
+## Epic 3 — Clients
+
+* Création client
+* Recherche
+* Modification
+* Historique
+
+## Epic 4 — Réservations
+
+* Création
+* Modification
+* Annulation
+* Disponibilité
+* Planning
+
+## Epic 5 — Séjours
+
+* Check-in
+* Gestion séjour
+* Check-out
+
+## Epic 6 — Finance
+
+* Factures
+* Paiements
+* Caisse
+* Dépenses
+
+## Epic 7 — Housekeeping
+
+* Tâches
+* Statuts
+* Affectation
+
+## Epic 8 — Reporting
+
+* Dashboard
+* Rapports
+* Exports
+
+## Epic 9 — Administration
+
+* Paramétrage
+* Audit
+* Notifications
+
+---
+
+# 61. PRIORISATION
+
+Les fonctionnalités seront classées :
+
+### MUST HAVE
+
+Fonctionnalités indispensables au fonctionnement de l'hôtel :
+
+* authentification ;
+* chambres ;
+* clients ;
+* réservations ;
+* planning ;
+* check-in ;
+* check-out ;
+* facturation ;
+* paiements ;
+* dashboard ;
+* utilisateurs ;
+* permissions.
+
+### SHOULD HAVE
+
+Fonctionnalités importantes :
+
+* housekeeping ;
+* caisse ;
+* dépenses ;
+* rapports ;
+* services ;
+* audit ;
+* notifications.
+
+### COULD HAVE
+
+Fonctionnalités évolutives :
+
+* restaurant ;
+* stock ;
+* maintenance ;
+* corporate ;
+* promotions.
+
+### FUTURE
+
+* OTA ;
+* Mobile Money ;
+* application mobile ;
+* portail client ;
+* fidélité ;
+* channel manager ;
+* comptabilité.
+
+---
+
+# 62. PRINCIPES ARCHITECTURAUX
+
+Le projet devra respecter les principes suivants :
+
+1. **API First**
+2. **Security by Design**
+3. **Audit by Design**
+4. **Modularité**
+5. **Séparation frontend/backend**
+6. **Transactions financières atomiques**
+7. **Idempotence des opérations critiques**
+8. **Validation côté serveur**
+9. **Configuration externalisée**
+10. **Observabilité**
+11. **Tests automatisés**
+12. **Évolutivité multi-hôtels**
+
+---
+
+# 63. RÉSULTAT ATTENDU
+
+À terme, l'application devra constituer une plateforme centralisée permettant à la direction et aux équipes opérationnelles de piloter l'hôtel depuis une interface unique.
+
+Le système devra permettre de répondre rapidement aux questions suivantes :
+
+* Combien de chambres sont disponibles ?
+* Combien sont occupées ?
+* Qui arrive aujourd'hui ?
+* Qui part aujourd'hui ?
+* Quel est le chiffre d'affaires ?
+* Combien avons-nous encaissé ?
+* Quel est le montant des impayés ?
+* Quelle est la performance de l'hôtel ?
+* Quelles chambres doivent être nettoyées ?
+* Quelles chambres sont en maintenance ?
+* Quels services génèrent le plus de revenus ?
+* Quelle est la situation de la caisse ?
+* Quelles sont les dépenses ?
+* Quel est l'historique d'un client ?
+* Qui a effectué une modification donnée ?
+
+---
+
+# 64. CONCLUSION
+
+Le projet consiste à développer un **PMS moderne, sécurisé, modulaire et évolutif**, couvrant le cycle complet de gestion d'un établissement hôtelier.
+
+L'architecture devra permettre de commencer avec un hôtel et un périmètre MVP tout en conservant la possibilité d'évoluer vers :
+
+**Multi-hôtels → Réservation en ligne → Paiements → OTA → Mobile → BI → Comptabilité → Channel Manager**
+
+Le développement devra être réalisé progressivement, avec validation de chaque module avant passage au suivant.
+
+La priorité est donnée à :
+
+**fiabilité des données + cohérence métier + sécurité + traçabilité + simplicité d'utilisation + évolutivité.**
