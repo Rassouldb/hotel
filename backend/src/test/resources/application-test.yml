@@ -1,0 +1,12 @@
+# Tests d'intégration : la connexion réelle est fournie par Testcontainers (@ServiceConnection).
+spring:
+  datasource:
+    url: jdbc:postgresql://fourni-par-testcontainers/pms
+    username: test
+    password: test
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
+
+pms:
+  idempotency:
+    cleanup-cron: "-"

@@ -1,0 +1,12 @@
+# Profil de développement local : base PostgreSQL de docker-compose, logs lisibles, données de démo.
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/pms}
+    username: ${DB_USERNAME:pms}
+    password: ${DB_PASSWORD:pms}
+  flyway:
+    locations: classpath:db/migration,classpath:db/seed
+
+logging:
+  level:
+    sn.niirma: DEBUG
