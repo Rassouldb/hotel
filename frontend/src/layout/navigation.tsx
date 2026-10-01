@@ -27,6 +27,10 @@ export interface NavItem {
   icon: ReactElement
   /** Itération du MVP 1 qui livre le module (§45.1), ou phase ultérieure. */
   availableIn: number | 'later'
+  /** Permissions dont l'une suffit à afficher l'entrée (aucune : visible par tous). */
+  anyOf?: string[]
+  /** 'hotel' : permission vérifiée dans l'hôtel actif ; 'organization' : dans au moins un hôtel. */
+  scope?: 'hotel' | 'organization'
 }
 
 export interface NavSection {
@@ -40,42 +44,66 @@ export const navigation: NavSection[] = [
     key: null,
     items: [
       { key: 'dashboard', path: '/', icon: <DashboardIcon />, availableIn: 0 },
-      { key: 'reception', path: '/reception', icon: <ConciergeIcon />, availableIn: 6 },
-      { key: 'reservations', path: '/reservations', icon: <EventNoteIcon />, availableIn: 4 },
-      { key: 'planning', path: '/planning', icon: <CalendarMonthIcon />, availableIn: 5 },
+      { key: 'reception', path: '/reception', icon: <ConciergeIcon />, availableIn: 6, anyOf: ['CHECKIN_CREATE', 'CHECKOUT_CREATE'] },
+      { key: 'reservations', path: '/reservations', icon: <EventNoteIcon />, availableIn: 4, anyOf: ['RESERVATION_VIEW'] },
+      { key: 'planning', path: '/planning', icon: <CalendarMonthIcon />, availableIn: 5, anyOf: ['RESERVATION_VIEW'] },
     ],
   },
   {
     key: 'operations',
     items: [
-      { key: 'customers', path: '/clients', icon: <PeopleIcon />, availableIn: 3 },
-      { key: 'companies', path: '/entreprises', icon: <BusinessIcon />, availableIn: 3 },
-      { key: 'rooms', path: '/chambres', icon: <BedIcon />, availableIn: 2 },
-      { key: 'housekeeping', path: '/housekeeping', icon: <CleaningServicesIcon />, availableIn: 6 },
-      { key: 'maintenance', path: '/maintenance', icon: <HandymanIcon />, availableIn: 'later' },
-      { key: 'restaurant', path: '/restaurant', icon: <RestaurantIcon />, availableIn: 'later' },
-      { key: 'services', path: '/services', icon: <SpaIcon />, availableIn: 6 },
+      { key: 'customers', path: '/clients', icon: <PeopleIcon />, availableIn: 3, anyOf: ['CUSTOMER_VIEW'] },
+      { key: 'companies', path: '/entreprises', icon: <BusinessIcon />, availableIn: 3, anyOf: ['COMPANY_VIEW'] },
+      { key: 'rooms', path: '/chambres', icon: <BedIcon />, availableIn: 2, anyOf: ['ROOM_VIEW'] },
+      { key: 'housekeeping', path: '/housekeeping', icon: <CleaningServicesIcon />, availableIn: 6, anyOf: ['HK_VIEW'] },
+      { key: 'maintenance', path: '/maintenance', icon: <HandymanIcon />, availableIn: 'later', anyOf: ['MAINTENANCE_VIEW'] },
+      { key: 'restaurant', path: '/restaurant', icon: <RestaurantIcon />, availableIn: 'later', anyOf: ['POS_VIEW'] },
+      { key: 'services', path: '/services', icon: <SpaIcon />, availableIn: 6, anyOf: ['FOLIO_CHARGE_POST'] },
     ],
   },
   {
     key: 'finance',
     items: [
-      { key: 'invoicing', path: '/facturation', icon: <ReceiptLongIcon />, availableIn: 8 },
-      { key: 'payments', path: '/paiements', icon: <PaymentsIcon />, availableIn: 7 },
-      { key: 'cash', path: '/caisse', icon: <PointOfSaleIcon />, availableIn: 7 },
-      { key: 'expenses', path: '/depenses', icon: <WalletIcon />, availableIn: 'later' },
+      { key: 'invoicing', path: '/facturation', icon: <ReceiptLongIcon />, availableIn: 8, anyOf: ['INVOICE_VIEW'] },
+      { key: 'payments', path: '/paiements', icon: <PaymentsIcon />, availableIn: 7, anyOf: ['PAYMENT_VIEW'] },
+      { key: 'cash', path: '/caisse', icon: <PointOfSaleIcon />, availableIn: 7, anyOf: ['CASH_SESSION_OPEN', 'CASH_SUPERVISE'] },
+      { key: 'expenses', path: '/depenses', icon: <WalletIcon />, availableIn: 'later', anyOf: ['EXPENSE_VIEW'] },
     ],
   },
   {
     key: 'management',
     items: [
-      { key: 'stock', path: '/stocks', icon: <InventoryIcon />, availableIn: 'later' },
-      { key: 'suppliers', path: '/fournisseurs', icon: <LocalShippingIcon />, availableIn: 'later' },
-      { key: 'reports', path: '/rapports', icon: <AssessmentIcon />, availableIn: 9 },
-      { key: 'nightAudit', path: '/cloture', icon: <NightsStayIcon />, availableIn: 8 },
-      { key: 'administration', path: '/administration', icon: <SettingsIcon />, availableIn: 1 },
+      { key: 'stock', path: '/stocks', icon: <InventoryIcon />, availableIn: 'later', anyOf: ['STOCK_VIEW'] },
+      { key: 'suppliers', path: '/fournisseurs', icon: <LocalShippingIcon />, availableIn: 'later', anyOf: ['SUPPLIER_MANAGE'] },
+      { key: 'reports', path: '/rapports', icon: <AssessmentIcon />, availableIn: 9, anyOf: ['REPORT_OPERATIONS_VIEW', 'REPORT_FINANCE_VIEW'] },
+      { key: 'nightAudit', path: '/cloture', icon: <NightsStayIcon />, availableIn: 8, anyOf: ['NIGHT_AUDIT_VIEW', 'NIGHT_AUDIT_RUN'] },
+      {
+        key: 'administration',
+        path: '/administration',
+        icon: <SettingsIcon />,
+        availableIn: 1,
+        anyOf: ['USER_VIEW', 'ROLE_MANAGE', 'AUDIT_VIEW'],
+        scope: 'organization',
+      },
     ],
   },
 ]
 
 export const allNavItems: NavItem[] = navigation.flatMap((section) => section.items)
+
+/** Dernière itération livrée : les modules prévus plus tard affichent la page « en préparation ». */
+export const CURRENT_ITERATION = 1
+
+export function isDelivered(item: NavItem): boolean {
+  return item.availableIn !== 'later' && item.availableIn <= CURRENT_ITERATION
+}
+
+type Can = (permission: string, hotelId?: string | null) => boolean
+
+export function isNavItemVisible(item: NavItem, can: Can, activeHotelId: string | null): boolean {
+  if (!item.anyOf) {
+    return true
+  }
+  const hotelId = item.scope === 'organization' ? null : activeHotelId
+  return item.anyOf.some((permission) => can(permission, hotelId))
+}

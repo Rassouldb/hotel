@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
 import { formatBusinessDate } from '../app/format'
+import { useAuth } from '../auth/AuthContext'
 import { ErrorAlert } from '../components/ErrorAlert'
 import { useActiveHotel } from '../hotel/ActiveHotelContext'
 
@@ -13,6 +14,7 @@ async function fetchApiHealth(): Promise<boolean> {
 
 export function DashboardPage() {
   const { t } = useTranslation()
+  const { profile } = useAuth()
   const { activeHotel, isLoading, error, refetch } = useActiveHotel()
   const health = useQuery({ queryKey: ['health'], queryFn: fetchApiHealth, refetchInterval: 30_000, retry: false })
 
@@ -28,7 +30,10 @@ export function DashboardPage() {
 
   return (
     <Stack spacing={3}>
-      <Typography variant="h4" component="h1">{t('dashboard.title')}</Typography>
+      <div>
+        <Typography variant="h4" component="h1">{t('dashboard.title')}</Typography>
+        {profile && <Typography color="text.secondary">{t('dashboard.welcome', { name: profile.firstName })}</Typography>}
+      </div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 8 }}>
           <Card variant="outlined">

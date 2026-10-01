@@ -24,7 +24,9 @@ import { NavLink, Outlet } from 'react-router'
 
 import { formatBusinessDate } from '../app/format'
 import { useActiveHotel } from '../hotel/ActiveHotelContext'
-import { navigation } from './navigation'
+import { useAuth } from '../auth/AuthContext'
+import { isDelivered, isNavItemVisible, navigation } from './navigation'
+import { UserMenu } from './UserMenu'
 
 const DRAWER_WIDTH = 260
 
@@ -33,6 +35,14 @@ export function AppLayout() {
   const theme = useTheme()
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
   const [mobileOpen, setMobileOpen] = useState(false)
+  const { can } = useAuth()
+  const { activeHotel } = useActiveHotel()
+  const sections = navigation
+    .map((section) => ({
+      ...section,
+      items: section.items.filter((item) => isNavItemVisible(item, can, activeHotel?.id ?? null)),
+    }))
+    .filter((section) => section.items.length > 0)
 
   const menu = (
     <Box component="nav" aria-label="Menu principal">
@@ -43,7 +53,7 @@ export function AppLayout() {
         </Box>
       </Toolbar>
       <Divider />
-      {navigation.map((section) => (
+      {sections.map((section) => (
         <List
           key={section.key ?? 'main'}
           dense
@@ -57,7 +67,7 @@ export function AppLayout() {
               end={item.path === '/'}
               onClick={() => setMobileOpen(false)}
               sx={{
-                opacity: item.availableIn === 0 ? 1 : 0.6,
+                opacity: isDelivered(item) ? 1 : 0.6,
                 '&.active': { bgcolor: 'action.selected', opacity: 1 },
               }}
             >
@@ -85,6 +95,8 @@ export function AppLayout() {
             </IconButton>
           )}
           <HotelBanner />
+          <Box sx={{ flexGrow: 1 }} />
+          <UserMenu />
         </Toolbar>
       </AppBar>
 

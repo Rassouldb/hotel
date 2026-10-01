@@ -1,6 +1,6 @@
 # Itération 1 — Authentification, utilisateurs, rôles, permissions
 
-**Statut** : validé le 2026-10-01 — en cours de réalisation
+**Statut** : réalisé le 2026-10-01
 **Références** : cahier des charges §6, §7, §32.1, §34.5, §39
 
 ## Objectif
@@ -146,3 +146,10 @@ Nouvelles tables (migration V4) : `app_user`, `role`, `permission`, `role_permis
 - À la création d'un compte et à chaque réinitialisation par un administrateur, le système génère un **mot de passe temporaire**, affiché une seule fois à l'administrateur.
 - Un mot de passe temporaire doit être changé à la première connexion : tant que ce n'est pas fait, toute requête autre que le changement de mot de passe, la consultation du profil et la déconnexion reçoit 403 `PASSWORD_CHANGE_REQUIRED`.
 - « Mot de passe oublié » accepte le nom d'utilisateur ou l'email ; l'email de réinitialisation n'est envoyé que si le compte a une adresse email. Sans email, l'employé s'adresse à son administrateur (`POST /users/{id}/reset-password`).
+
+## Réalisation
+
+- Backend : modules `iam` (utilisateurs, rôles, permissions, contrôle d'accès) et `auth` (jetons, sessions, mots de passe) ; migrations V4 à V6.
+- Frontend : écrans de connexion, mot de passe oublié / réinitialisation, changement obligatoire, profil, administration (utilisateurs, rôles, journal d'audit), menu filtré par les droits.
+- Tests : 58 tests backend (dont la couverture des règles d'accès sur tous les endpoints), 18 tests frontend.
+- Écart : la limitation de débit est en mémoire (une instance) ; à porter sur Redis si l'API passe sur plusieurs instances.
