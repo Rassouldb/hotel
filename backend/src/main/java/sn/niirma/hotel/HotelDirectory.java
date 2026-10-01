@@ -1,5 +1,6 @@
 package sn.niirma.hotel;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +41,17 @@ public class HotelDirectory {
 
     public List<UUID> organizationIds() {
         return organizations.findAll().stream().map(Organization::getId).toList();
+    }
+
+    /** Date d'exploitation courante de l'hôtel. */
+    public LocalDate businessDate(UUID hotelId) {
+        return hotels.findById(hotelId).map(Hotel::getBusinessDate)
+                .orElseThrow(() -> new IllegalArgumentException("Hôtel inconnu : " + hotelId));
+    }
+
+    /** Tous les hôtels, toutes organisations confondues (initialisation au démarrage). */
+    public List<UUID> allHotelIds() {
+        return hotels.findAll().stream().map(Hotel::getId).toList();
     }
 
     public Optional<UUID> findFirstOrganizationId() {

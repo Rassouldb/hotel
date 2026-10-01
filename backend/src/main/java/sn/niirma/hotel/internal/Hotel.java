@@ -8,6 +8,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -54,7 +55,43 @@ public class Hotel extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    /** Paramètres d'exploitation (JSON), voir {@code HotelSettings}. */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private String settings;
+
+    /** Le logo lui-même n'est jamais chargé avec l'hôtel : seule sa présence l'est. */
+    @Formula("(logo IS NOT NULL)")
+    private boolean hasLogo;
+
     protected Hotel() {
+    }
+
+    public Hotel(UUID organizationId, String code, String name, String currencyCode, String timezone, String language,
+                 LocalDate businessDate, String settings) {
+        this.organizationId = organizationId;
+        this.code = code;
+        this.name = name;
+        this.currencyCode = currencyCode;
+        this.timezone = timezone;
+        this.language = language;
+        this.businessDate = businessDate;
+        this.settings = settings;
+        this.status = Status.ACTIVE;
+    }
+
+    public void updateInformation(String name, String legalName, String address, String phone, String email,
+                                  String legalIds, String language) {
+        this.name = name;
+        this.legalName = legalName;
+        this.address = address;
+        this.phone = phone;
+        this.email = email;
+        this.legalIds = legalIds;
+        this.language = language;
+    }
+
+    public void updateSettings(String settings) {
+        this.settings = settings;
     }
 
     public UUID getOrganizationId() {
@@ -111,5 +148,13 @@ public class Hotel extends BaseEntity {
 
     public Status getStatus() {
         return status;
+    }
+
+    public String getSettings() {
+        return settings;
+    }
+
+    public boolean hasLogo() {
+        return hasLogo;
     }
 }
